@@ -50,6 +50,17 @@ module OmniAuth
         }
       end
 
+      credentials do
+        hash = {'token' => access_token.token}
+        hash.merge!('expires_at' => access_token.expires_at) if access_token.expires?
+        hash.merge!('expires' => access_token.expires?)
+        if !(bot_params = access_token.params['bot']).nil?
+          hash.merge!('bot_access_token' => bot_params['bot_access_token'])
+          hash.merge!('bot_user_id' => bot_params['bot_user_id'])
+        end
+        hash
+      end
+
       def raw_info
         @raw_info ||= access_token.get('/api/auth.test').parsed
       end
